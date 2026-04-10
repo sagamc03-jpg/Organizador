@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corrector Gramatical</title>
+<style>
+  :root {
+    --c1:#FF6B6B;--c2:#FFD93D;--c3:#6BCB77;--c4:#4D96FF;
+    --c5:#FF922B;--c6:#CC5DE8;--c7:#20C997;--c8:#F06595;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'Segoe UI',sans-serif;
+    background:#0f0f1a;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:30px 20px 60px;
+    overflow-x:hidden;
+  }
+
+  .titulo {
+    color:white;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    opacity:0.5;
+    margin-bottom:28px;
+  }
+
+  /* INPUT */
+  .input-area {
+    width:100%;max-width:860px;
+    display:flex;gap:12px;margin-bottom:50px;
+  }
+  #inputTexto {
+    flex:1;padding:16px 24px;border-radius:50px;
+    border:2px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.06);
+    color:white;font-size:20px;outline:none;
+    transition:border-color .3s;
+  }
+  #inputTexto::placeholder{color:rgba(255,255,255,0.25);}
+  #inputTexto:focus{border-color:rgba(255,255,255,0.4);}
+  #btnCorregir {
+    padding:16px 34px;border-radius:50px;border:none;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;font-size:18px;font-weight:700;
+    cursor:pointer;transition:transform .2s,box-shadow .2s;white-space:nowrap;
+  }
+  #btnCorregir:hover{transform:scale(1.05);box-shadow:0 8px 28px rgba(102,126,234,.5);}
+  #btnCorregir:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+  /* ZONAS */
+  .zona { width:100%;max-width:1100px;display:flex;flex-direction:column;gap:50px; }
+
+  .fila-label {
+    color:rgba(255,255,255,.3);font-size:12px;
+    font-weight:700;letter-spacing:4px;
+    text-transform:uppercase;margin-bottom:14px;
+  }
+
+  .fichas {
+    display:flex;flex-wrap:wrap;gap:14px;
+    min-height:80px;align-items:center;
+    position:relative;
+  }
+
+  /* FICHA BASE */
+  .ficha {
+    padding:14px 26px;border-radius:16px;
+    font-size:30px;font-weight:800;color:white;
+    text-shadow:0 2px 6px rgba(0,0,0,.35);
+    box-shadow:0 6px 20px rgba(0,0,0,.3);
+    user-select:none;position:relative;
+  }
+
+  /* Ficha fantasma (placeholder invisible en fila destino) */
+  .ficha-ghost {
+    padding:14px 26px;border-radius:16px;
+    font-size:30px;font-weight:800;
+    opacity:0;pointer-events:none;
+  }
+
+  /* Animación entrada originales */
+  @keyframes aparecer {
+    from{opacity:0;transform:translateY(-18px) scale(.8);}
+    to  {opacity:1;transform:translateY(0)    scale(1);}
+  }
+  /* Sacudida */
+  @keyframes shake {
+    0%,100%{transform:translateX(0) rotate(0);}
+    20%{transform:translateX(-7px) rotate(-3deg);}
+    40%{transform:translateX(7px)  rotate(3deg);}
+    60%{transform:translateX(-4px) rotate(-2deg);}
+    80%{transform:translateX(4px)  rotate(2deg);}
+  }
+  /* Destello al aterrizar */
+  @keyframes glow {
+    0%  {box-shadow:0 6px 20px rgba(0,0,0,.3);}
+    50% {box-shadow:0 0 28px 8px rgba(255,255,255,.28);}
+    100%{box-shadow:0 6px 20px rgba(0,0,0,.3);}
+  }
+
+  .ficha.anim-aparecer { animation:aparecer .4s ease both; }
+  .ficha.anim-shake    { animation:shake   .45s ease-in-out; }
+  .ficha.anim-glow     { animation:glow    .8s ease-in-out forwards; }
+
+  /* Ficha voladora (posición absoluta mientras viaja) */
+  .ficha-voladora {
+    position:fixed;
+    z-index:9999;
+    pointer-events:none;
+    padding:14px 26px;border-radius:16px;
+    font-size:30px;font-weight:800;color:white;
+    text-shadow:0 2px 6px rgba(0,0,0,.35);
+    box-shadow:0 6px 20px rgba(0,0,0,.3);
+    will-change:transform,opacity;
+  }
+
+  /* Separador */
+  .sep {
+    width:100%;height:2px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  }
+
+  /* Placeholder texto */
+  .ph { color:rgba(255,255,255,.13);font-size:26px;font-style:italic; }
+
+  /* OPCIONES */
+  .opciones-wrap { width:100%;max-width:1100px;margin-top:16px;display:none; }
+  .opciones-titulo {
+    color:rgba(255,255,255,.25);font-size:11px;
+    letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;
+  }
+  .opciones-lista { display:flex;flex-wrap:wrap;gap:10px; }
+  .opcion-btn {
+    padding:9px 18px;border-radius:30px;
+    border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.55);font-size:15px;cursor:pointer;transition:all .2s;
+  }
+  .opcion-btn:hover{background:rgba(255,255,255,.1);color:white;}
+
+  /* EJEMPLOS */
+  .ejemplos { width:100%;max-width:1100px;margin-top:28px; }
+  .ej-titulo {
+    color:rgba(255,255,255,.2);font-size:11px;
+    letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;
+  }
+  .ej-lista { display:flex;flex-wrap:wrap;gap:10px; }
+  .ej-btn {
+    padding:9px 18px;border-radius:30px;
+    border:1px dashed rgba(255,255,255,.18);
+    background:transparent;color:rgba(255,255,255,.38);
+    font-size:14px;cursor:pointer;transition:all .2s;
+  }
+  .ej-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);}
+
+  /* LOADING / ERROR */
+  #loading {
+    display:none;align-items:center;gap:10px;
+    color:rgba(255,255,255,.45);font-size:15px;margin-bottom:14px;
+  }
+  .spinner {
+    width:20px;height:20px;
+    border:3px solid rgba(255,255,255,.1);
+    border-top:3px solid #667eea;
+    border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #error {
+    display:none;color:#FF6B6B;font-size:15px;
+    padding:11px 18px;background:rgba(255,107,107,.1);
+    border-radius:10px;border:1px solid rgba(255,107,107,.25);
+    margin-bottom:12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="titulo">✋ Corrector de Oraciones</div>
+
+<div class="input-area">
+  <input id="inputTexto" type="text" placeholder="Escribe la oración desordenada..." autocomplete="off"/>
+  <button id="btnCorregir" onclick="corregir()">✨ Corregir</button>
+</div>
+
+<div id="loading"><div class="spinner"></div> Analizando oración...</div>
+<div id="error">❌ No se pudo conectar. ¿Está corriendo localhost:8000?</div>
+
+<div class="zona">
+  <div>
+    <div class="fila-label">🔀 Oración original</div>
+    <div class="fichas" id="fichasOrig"><span class="ph">Aquí aparecerá tu oración...</span></div>
+  </div>
+  <div class="sep"></div>
+  <div>
+    <div class="fila-label">✅ Oración corregida</div>
+    <div class="fichas" id="fichasDest"><span class="ph">Aquí llegarán las palabras ordenadas...</span></div>
+  </div>
+</div>
+
+<div class="opciones-wrap" id="opcionesWrap">
+  <div class="opciones-titulo">📋 Otras posibilidades</div>
+  <div class="opciones-lista" id="opcionesLista"></div>
+</div>
+
+<div class="ejemplos">
+  <div class="ej-titulo">🎯 Ejemplos rápidos</div>
+  <div class="ej-lista">
+    <button class="ej-btn" onclick="usar('perro el come pescado')">perro el come pescado</button>
+    <button class="ej-btn" onclick="usar('casa la es grande')">casa la es grande</button>
+    <button class="ej-btn" onclick="usar('estudiantes los estudian biblioteca en la')">estudiantes los estudian...</button>
+    <button class="ej-btn" onclick="usar('juega niña la con pelota amarilla la')">juega niña la con pelota...</button>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000/corregir';
+const COLORES = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF922B','#CC5DE8','#20C997','#F06595'];
+
+let mapaColor = {};
+
+function getColor(palabra, idx) {
+  const k = palabra.toLowerCase();
+  if (!mapaColor[k]) mapaColor[k] = COLORES[idx % COLORES.length];
+  return mapaColor[k];
+}
+
+// Espera helper
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// ── Muestra fichas originales con animación de entrada ──
+async function mostrarOriginales(palabras) {
+  mapaColor = {};
+  const cont = document.getElementById('fichasOrig');
+  cont.innerHTML = '';
+  for (let i = 0; i < palabras.length; i++) {
+    const f = document.createElement('div');
+    f.className = 'ficha anim-aparecer';
+    f.textContent = palabras[i];
+    f.style.background = getColor(palabras[i], i);
+    f.style.animationDelay = `${i * 80}ms`;
+    f.dataset.palabra = palabras[i];
+    cont.appendChild(f);
+    await wait(60);
+  }
+  // Sacudida al final
+  await wait(palabras.length * 80 + 150);
+  cont.querySelectorAll('.ficha').forEach(f => {
+    f.classList.remove('anim-shake');
+    void f.offsetWidth;
+    f.classList.add('anim-shake');
+  });
+  await wait(500);
+}
+
+// ── Anima una ficha volando desde origen a destino ──
+function volarFicha(palabra, color, rectOrigen, rectDestino) {
+  return new Promise(resolve => {
+    const v = document.createElement('div');
+    v.className = 'ficha-voladora';
+    v.textContent = palabra;
+    v.style.background = color;
+    v.style.left  = rectOrigen.left + 'px';
+    v.style.top   = rectOrigen.top  + 'px';
+    v.style.width = rectOrigen.width + 'px';
+    document.body.appendChild(v);
+
+    const dx = rectDestino.left - rectOrigen.left;
+    const dy = rectDestino.top  - rectOrigen.top;
+
+    // Arco de vuelo con cubic-bezier elástico
+    v.animate([
+      { transform: 'translate(0,0) scale(1)',        opacity: 1 },
+      { transform: `translate(${dx*0.5}px,${dy*0.4 - 60}px) scale(1.15)`, opacity: 1, offset: 0.45 },
+      { transform: `translate(${dx}px,${dy}px) scale(1)`, opacity: 1 }
+    ], {
+      duration: 620,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      fill: 'forwards'
+    }).onfinish = () => {
+      v.remove();
+      resolve();
+    };
+  });
+}
+
+// ── Orquesta el vuelo de todas las fichas ──
+async function animarVuelo(palabrasOrig, palabrasDest) {
+  const contDest = document.getElementById('fichasDest');
+  const contOrig = document.getElementById('fichasOrig');
+  contDest.innerHTML = '';
+
+  // Crear fichas fantasma en destino (invisibles, para medir posición)
+  const fantasmas = palabrasDest.map((p, i) => {
+    const g = document.createElement('div');
+    g.className = 'ficha-ghost';
+    g.textContent = p;
+    g.style.background = getColor(p, i);
+    contDest.appendChild(g);
+    return g;
+  });
+
+  // Pequeña pausa para que el DOM calcule posiciones
+  await wait(60);
+
+  // Construir mapa: palabra → fichas originales disponibles
+  const origFichas = Array.from(contOrig.querySelectorAll('.ficha'));
+  const usados = new Set();
+
+  for (let i = 0; i < palabrasDest.length; i++) {
+    const palabra = palabrasDest[i];
+    const color   = getColor(palabra, i);
+    const ghost   = fantasmas[i];
+
+    // Buscar ficha origen que coincida y no haya sido usada
+    let fichaOrig = null;
+    for (let j = 0; j < origFichas.length; j++) {
+      if (!usados.has(j) && origFichas[j].dataset.palabra.toLowerCase() === palabra.toLowerCase()) {
+        fichaOrig = origFichas[j];
+        usados.add(j);
+        break;
+      }
+    }
+
+    const rectDest = ghost.getBoundingClientRect();
+
+    if (fichaOrig) {
+      const rectOrig = fichaOrig.getBoundingClientRect();
+      // Oscurecer ficha original mientras vuela
+      fichaOrig.style.opacity = '0.25';
+      await volarFicha(palabra, color, rectOrig, rectDest);
+    }
+
+    // Revelar ficha real en destino
+    ghost.classList.remove('ficha-ghost');
+    ghost.classList.add('ficha','anim-glow');
+    ghost.style.opacity = '1';
+
+    await wait(80); // pequeño delay entre fichas para efecto cascada
+  }
+}
+
+// ── MAIN ──
+async function corregir() {
+  const texto = document.getElementById('inputTexto').value.trim();
+  if (!texto) return;
+
+  const btn = document.getElementById('btnCorregir');
+  btn.disabled = true;
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('error').style.display   = 'none';
+  document.getElementById('opcionesWrap').style.display = 'none';
+  document.getElementById('fichasDest').innerHTML  = '<span class="ph">Esperando...</span>';
+
+  const palabrasOrig = texto.split(/\s+/);
+  await mostrarOriginales(palabrasOrig);
+
+  try {
+    const res = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ texto })
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    const palabrasDest = data.texto_corregido.trim().split(/\s+/);
+    await animarVuelo(palabrasOrig, palabrasDest);
+
+    // Opciones alternativas
+    const otras = data.opciones.filter(o => o.trim().toLowerCase() !== data.texto_corregido.trim().toLowerCase());
+    if (otras.length) {
+      const lista = document.getElementById('opcionesLista');
+      lista.innerHTML = '';
+      otras.forEach(o => {
+        const b = document.createElement('button');
+        b.className = 'opcion-btn';
+        b.textContent = o;
+        b.onclick = () => reanimar(palabrasOrig, o.trim().split(/\s+/));
+        lista.appendChild(b);
+      });
+      document.getElementById('opcionesWrap').style.display = 'block';
+    }
+
+  } catch {
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('fichasDest').innerHTML = '';
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+    btn.disabled = false;
+  }
+}
+
+async function reanimar(orig, dest) {
+  document.getElementById('fichasDest').innerHTML = '<span class="ph">Reordenando...</span>';
+  // Restaurar opacidad originales
+  document.getElementById('fichasOrig').querySelectorAll('.ficha').forEach(f => f.style.opacity = '1');
+  await wait(200);
+  await animarVuelo(orig, dest);
+}
+
+function usar(t) {
+  document.getElementById('inputTexto').value = t;
+  corregir();
+}
+
+document.getElementById('inputTexto').addEventListener('keydown', e => {
+  if (e.key === 'Enter') corregir();
+});
+</script>
+</body>
+</html>
