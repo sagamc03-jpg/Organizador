@@ -16,7 +16,7 @@ class Settings:
     # === PALABRAS ESPECIALES ===
     # Sustantivos que pueden funcionar como verbos
     SUSTANTIVOS_VERBALES: Set[str] = {
-        'copia', 'manda','eres', 'guarda', 'cura', 'compra', 'canto', 'uso', 
+        'baila', 'copia', 'manda','eres', 'guarda', 'cura', 'compra', 'canto', 'uso', 
         'copio', 'pelea', 'bebe', 'mira', 'ama', 'odia', 'baja', 'caza', 'pesca', 
         'cosecha', 'siembra', 'barniza', 'borda', 'rema', 'patina', 'brinca', 
         'trota', 'escala', 'resbala', 'gira', 'ata', 'suelta', 'agarra', 'pega', 
@@ -47,6 +47,7 @@ class Settings:
         "carpintero": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "acertijo": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "mar": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
+        "celular": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "tejado": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "ave": {"pos": "NOUN", "num": "Sing"},
         "bebé": {"pos": "NOUN", "num": "Sing"},
@@ -77,7 +78,7 @@ class Settings:
         "vestido": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "negro": {"pos": "ADJ", "gen": "Masc", "num": "Sing"},
         #cat 2
-        "baila": {"pos": "VERB", "num": "Sing"},   #puede ser un noun, se refiere al nombre de un pez
+        #"baila": {"pos": "VERB", "num": "Sing"},   puede ser un noun, se refiere al nombre de un pez
         "mecánico": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "tus": {"pos": "DET", "num": "Plur"},
         "primos": {"pos": "NOUN", "gen": "Masc", "num": "Plur"},

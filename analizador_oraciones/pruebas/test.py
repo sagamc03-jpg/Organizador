@@ -11,10 +11,8 @@ from core.servicios.evaluador_oraciones import EvaluadorNaturalidad
 def pruebas_rapidas():
     """Pruebas rápidas con GPT-2 para casos ambiguos (estilo original)"""
     casos = [ 
-        "preciosa una mujer baila canción la",
-        "perro no ese es mío",
         "ratón el a gato persigue negro un",
-        "partido el ganar intenta equipo el",
+        "ratón un a gato persigue negro el"
     ]
     """, ""ganó rojo el carrera la coche",
         "ratón el a gato persigue negro un",
@@ -24,6 +22,10 @@ def pruebas_rapidas():
         "elegante un modista vestido la cose",
         "mecánico el por reparada fue motocicleta la",
         "llave con cerrada fue puerta la",
+        "partido el ganar intenta equipo el",
+        "estudiantes los estudian la en biblioteca",
+        "preciosa una mujer baila canción la",
+        "perro no ese es mío",
         "cansados primos parecen tus",
         "teléfono por hablando maneja conductor el",
         "cuaderno su trajo no joven el","""

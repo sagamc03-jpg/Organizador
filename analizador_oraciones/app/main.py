@@ -73,7 +73,7 @@ async def corregir(request: CorreccionRequest):
     if len(frases) > 0:
         if len(frases) > 1:
             # GPT-2 ya está en memoria, será instantáneo
-            mejor = evaluador.elegir_mejor_frase(frases)
+            mejor = evaluador.elegir_mejor_frase(frases, chunks)
             texto_corregido = mejor.texto if mejor else frases[0].texto
         else:
             texto_corregido = frases[0].texto
