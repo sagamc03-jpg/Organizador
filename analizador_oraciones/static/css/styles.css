@@ -1,0 +1,529 @@
+:root {
+  /* Li et al. (2025): verde claro RGB(207,232,204) */
+  --bg: #cfe8cc;
+  --surface: #f7fbf7;
+  /* blanco suavizado — no puro, tinte verde muy sutil */
+  --surface2: #eef6ed;
+  --border: #c2dbbf;
+  --border-soft: #d8ecd6;
+  --text: #1c2b1a;
+  --text-muted: #5a7257;
+  --text-faint: #96b593;
+
+  --accent: #2d6a30;
+  --accent-hover: #235225;
+  --accent-hi: #d4ebd2;
+
+  /* Bloques — sin rojo, saturación moderada (Fan et al. 2024; Désiron & Schneider 2024) */
+  --c1: #2563a8;
+  --c2: #2d7d4f;
+  --c3: #6d3fa8;
+  --c4: #b06820;
+  --c5: #1a7a7a;
+  --c6: #c9db52;
+  --c7: #7a6020;
+
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --radius-chip: 14px;
+  --shadow-card: 0 2px 20px rgba(45, 106, 48, 0.09);
+  --shadow-chip: 0 2px 8px rgba(0, 0, 0, 0.14);
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 60px;
+}
+
+/* ── HEADER MÍNIMO ── */
+header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+header h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(15px, 2vw, 20px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.3px;
+}
+
+/* ── INPUT COLAPSABLE ── */
+.input-wrap {
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 24px;
+  transition: all .4s ease;
+}
+
+.input-wrap.colapsado .input-card {
+  padding: 10px 16px;
+  box-shadow: none;
+  border-color: var(--border-soft);
+}
+
+.input-wrap.colapsado .ejemplos-row {
+  display: none;
+}
+
+.input-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 18px 22px;
+  box-shadow: var(--shadow-card);
+  transition: all .35s ease;
+}
+
+.input-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+#inputTexto {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+#inputTexto::placeholder {
+  color: var(--text-faint);
+}
+
+#inputTexto:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(45, 106, 48, 0.10);
+}
+
+#btnEnviar {
+  padding: 11px 22px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(45, 106, 48, 0.22);
+}
+
+#btnEnviar:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+#btnEnviar:active {
+  transform: translateY(0);
+}
+
+#btnEnviar:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* botón editar — aparece cuando está colapsado */
+#btnEditar {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: color var(--transition);
+  margin-left: 4px;
+}
+
+#btnEditar:hover {
+  color: var(--accent);
+}
+
+.input-wrap.colapsado #btnEditar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ejemplos-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ej-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1.5px dashed var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.ej-btn:hover {
+  background: var(--accent-hi);
+  color: var(--accent);
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+/* ── ZONA PRINCIPAL — protagonista ── */
+.zona {
+  width: 100%;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* ── PANEL ── */
+.panel {
+  /* blanco suavizado — no puro #fff, sino tinte verde muy leve */
+  background: var(--surface);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 28px 32px 32px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), opacity var(--transition);
+  width: 100%;
+}
+
+.panel+.panel {
+  margin-top: 14px;
+}
+
+.panel-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-label .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+
+.panel-resultado {
+  opacity: .45;
+  pointer-events: none;
+}
+
+.panel-resultado.listo {
+  opacity: 1;
+  pointer-events: auto;
+  border-color: #acd4a8;
+}
+
+.panel-resultado.listo .dot {
+  background: var(--accent);
+}
+
+/* ── FICHAS — más grandes, centradas ── */
+.fichas {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  min-height: 72px;
+  align-items: center;
+  justify-content: center;
+  /* centradas horizontalmente */
+  width: 100%;
+  /*overflow-x: auto;*/
+  /*padding-bottom: 8px;*/
+}
+
+.sep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 0;
+  opacity: .4;
+}
+
+.sep-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.sep-icon {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ── BLOQUES DE PALABRAS ── */
+.ficha {
+  padding: 13px 26px;
+  border-radius: var(--radius-chip);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 3vw, 32px);
+  /* grandes para proyección */
+  font-weight: 800;
+  color: #fff;
+  box-shadow: var(--shadow-chip);
+  user-select: none;
+  position: relative;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ficha-ghost {
+  padding: 13px 26px;
+  border-radius: var(--radius-chip);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ph {
+  color: var(--text-faint);
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* ── ANIMACIONES ── */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(.86);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+
+  40% {
+    transform: translateX(5px) rotate(2deg);
+  }
+
+  60% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+
+@keyframes glow-green {
+  0% {
+    box-shadow: var(--shadow-chip);
+  }
+
+  50% {
+    box-shadow: 0 0 24px 7px rgba(45, 106, 48, 0.32);
+  }
+
+  100% {
+    box-shadow: var(--shadow-chip);
+  }
+}
+
+.ficha.anim-aparecer {
+  animation: aparecer .34s ease both;
+}
+
+.ficha.anim-shake {
+  animation: shake .4s ease-in-out;
+}
+
+.ficha.anim-glow {
+  animation: glow-green .85s ease forwards;
+}
+
+/* ── FICHA VOLADORA ── */
+.ficha-voladora {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  padding: 13px 26px;
+  border-radius: var(--radius-chip);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .18);
+  will-change: transform, opacity;
+}
+
+/* ── BOTÓN REVELAR ── */
+#btnRevelar {
+  display: none;
+  margin: 16px auto 0;
+  padding: 13px 34px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 16px rgba(45, 106, 48, 0.25);
+  transition: background var(--transition), transform var(--transition);
+}
+
+#btnRevelar:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+#btnRevelar.visible {
+  display: block;
+}
+
+/* ── OPCIONES ── */
+.opciones-wrap {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 14px;
+  display: none;
+  background: var(--surface);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 18px 22px;
+  box-shadow: var(--shadow-card);
+}
+
+.opciones-titulo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+}
+
+.opciones-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opcion-btn {
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.opcion-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ── ESTADO / LOADING ── */
+#estadoMsg {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  margin-bottom: 12px;
+  background: var(--surface);
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  width: fit-content;
+}
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#errorMsg {
+  display: none;
+  color: #5a1a1a;
+  font-size: 13px;
+  padding: 9px 16px;
+  background: #fdecea;
+  border-radius: 12px;
+  border: 1.5px solid #f5b8b8;
+  margin-bottom: 12px;
+  font-weight: 500;
+  width: 100%;
+  max-width: 700px;
+}

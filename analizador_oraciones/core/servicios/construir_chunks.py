@@ -204,7 +204,7 @@ class ConstructorDeChunks:
         """
         Detecta si hay ambigüedad sintáctica.
         Ambigüedad: UN DET + DOS+ NOUNs compatibles
-        Ejemplo: "el perro grande" donde "grande" es NOUN
+        Ejemplo: "el perro come pescado"
         
         Returns:
             Tupla de 4 elementos:

@@ -1,0 +1,346 @@
+/* =========================
+   drag.css
+   Estilos específicos para los modos drag.
+   Complementa styles.css — nunca lo sobreescribe.
+   ========================= */
+
+/* ── SELECTOR DE MODO ────────────────────────────────
+   Esquina superior izquierda, discreto pero accesible.
+   Tres botones: Animación · Retroalimentación · Evaluación
+   ─────────────────────────────────────────────────── */
+.modo-selector {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modo-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  box-shadow: var(--shadow-card);
+}
+
+.modo-btn:hover {
+  background: var(--accent-hi);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Modo activo — resaltado con acento verde */
+.modo-btn.activo {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px rgba(45, 106, 48, 0.25);
+}
+
+/* Icono pequeño dentro del botón de modo */
+.modo-btn .modo-icono {
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* ── DROPZONE ────────────────────────────────────────
+   Zona donde se sueltan las fichas.
+   Visible solo cuando el modo drag está activo.
+   ─────────────────────────────────────────────────── */
+.dropzone {
+  min-height: 90px;
+  border: 2px dashed var(--border-soft);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: center;
+  background: var(--surface2);
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+  width: 100%;
+}
+
+/* Cuando una ficha está encima — resalta la zona */
+.dropzone.activa {
+  background: var(--accent-hi);
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+/* ── ESTADOS DE FICHA ────────────────────────────────
+   Correcto  → borde verde suave
+   Incorrecto → borde ámbar suave
+   Las fichas incorrectas siguen siendo arrastrables.
+   ─────────────────────────────────────────────────── */
+.ficha.correcta {
+  outline: 3px solid rgba(45, 125, 79, 0.40);
+  outline-offset: 2px;
+  cursor: default;
+  /* ya no se mueve — está confirmada */
+}
+
+.ficha.incorrecta {
+  outline: 3px solid rgba(176, 104, 32, 0.40);
+  outline-offset: 2px;
+}
+
+/* Ficha siendo arrastrada — se atenúa en origen */
+.ficha.arrastrando {
+  opacity: 0.40;
+  transform: scale(0.96);
+}
+
+/* ── HUECO RESERVADO ─────────────────────────────────
+   Aparece en retroalimentación cuando una ficha incorrecta
+   vuelve al banco. Reserva el espacio visualmente.
+   Desaparece cuando el estudiante suelta una ficha encima.
+   ─────────────────────────────────────────────────── */
+.ficha-hueco {
+  width: 130px;         /* ancho promedio — ni tan corto como un artículo ni tan largo */
+  height: 58px;         /* misma altura que las fichas */
+  border-radius: var(--radius-chip);
+  background: #3a3a3a;
+  opacity: 0.35;
+  border: 2px dashed #666;
+  flex-shrink: 0;
+  transition: opacity var(--transition), border-color var(--transition);
+}
+
+/* Cuando una ficha está encima del hueco */
+.ficha-hueco.hueco-activo {
+  opacity: 0.7;
+  border-color: var(--accent);
+  background: #2a2a2a;
+}
+
+/* ── PANEL EN MODO DRAG ──────────────────────────────
+   En modos drag los paneles están siempre activos.
+   Se sobreescribe la opacidad reducida de styles.css.
+   ─────────────────────────────────────────────────── */
+.panel-drag {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Cuando el panel inferior tiene la respuesta correcta completa */
+.panel-drag.completo {
+  border-color: #acd4a8;
+}
+
+.panel-drag.completo .dot {
+  background: var(--accent);
+}
+
+/* ── BARRA DE ACCIONES ───────────────────────────────
+   Botones Verificar · Limpiar · Reiniciar
+   Aparecen debajo de los paneles en modos drag.
+   ─────────────────────────────────────────────────── */
+.acciones-drag {
+  display: none;
+  width: 100%;
+  max-width: 90vw;
+  margin-top: 10px;
+  position: relative;
+  height: 48px;
+  align-items: center;
+}
+
+.acciones-drag.visible {
+  display: flex;
+}
+
+.accion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  position: absolute;
+  padding: 0;
+  font-size: 0;        /* oculta el texto */
+}
+
+.btn-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+/* Posicionamiento */
+#btnLimpiar       { left: 0; }
+#btnVerificar     { left: 50%; transform: translateX(-50%); }
+#btnReiniciarDrag { right: 0; }
+
+/* Verificar — verde, levemente más grande */
+#btnVerificar {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px rgba(45, 106, 48, 0.22);
+  width: 44px;
+  height: 44px;
+  font-size: 0;
+}
+
+#btnVerificar:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+#btnVerificar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+#btnLimpiar:hover,
+#btnReiniciarDrag:hover {
+  background: var(--accent-hi);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+/* ── MENSAJE DE RESULTADO DRAG ───────────────────────
+   Reemplaza al panel de "oración corregida" en modos drag.
+   Muestra retroalimentación textual debajo de las acciones.
+   ─────────────────────────────────────────────────── */
+.resultado-drag {
+  display: none;
+  width: 100%;
+  max-width: 90vw;
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 14px 20px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition);
+}
+
+.resultado-drag.visible {
+  display: block;
+}
+
+.resultado-drag.ok {
+  border-color: #acd4a8;
+}
+
+.resultado-drag.fail {
+  border-color: #f5c6a0;
+}
+
+.resultado-drag-titulo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 5px;
+}
+
+.resultado-drag-texto {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────
+   En móvil el selector de modo baja debajo del header.
+   ─────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .modo-selector {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .modo-btn {
+    font-size: 10px;
+    padding: 6px 11px;
+  }
+}
+
+/* ── CELEBRACIÓN: BRILLO DEL PANEL ──────────────────── */
+@keyframes brilloPulso {
+  0%   { box-shadow: 0 0 0px rgba(59, 130, 246, 0); border-color: var(--border-soft); }
+  30%  { box-shadow: 0 0 28px rgba(59, 130, 246, 0.7), 0 0 60px rgba(59, 130, 246, 0.3); border-color: #3b82f6; }
+  60%  { box-shadow: 0 0 16px rgba(59, 130, 246, 0.4); border-color: #60a5fa; }
+  100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.2); border-color: #93c5fd; }
+}
+
+.panel-correcto {
+  animation: brilloPulso 1.2s ease-out forwards;
+}
+
+/* ── CELEBRACIÓN: CONFETI ────────────────────────────── */
+.confeti-pieza {
+  position: fixed;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  top: -12px;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confetiFall linear forwards;
+}
+
+@keyframes confetiFall {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+/* ── ERROR: SHAKE DEL PANEL ─────────────────────────── */
+@keyframes panelShake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-8px); }
+  30%  { transform: translateX(8px); }
+  45%  { transform: translateX(-6px); }
+  60%  { transform: translateX(6px); }
+  75%  { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.panel-error {
+  animation: panelShake 0.45s ease-out;
+}
+
+/* ── ERROR: EMOJI FLOTANTE ───────────────────────────── */
+.emoji-flotante {
+  position: fixed;
+  font-size: 28px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: emojiSube 1.2s ease-out forwards;
+}
+
+@keyframes emojiSube {
+  0%   { transform: translateY(0)    scale(0.6); opacity: 0; }
+  20%  { transform: translateY(-20px) scale(1.2); opacity: 1; }
+  80%  { transform: translateY(-80px) scale(1);   opacity: 1; }
+  100% { transform: translateY(-120px) scale(0.9); opacity: 0; }

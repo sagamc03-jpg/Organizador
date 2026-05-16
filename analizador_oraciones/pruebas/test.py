@@ -1,18 +1,21 @@
-import sys  #Busca los módulos dentro de la carpeta
+import sys  # Busca los módulos dentro de la carpeta
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.servicios.analizador import Analizador
 from core.servicios.construir_chunks import ConstructorDeChunks
-from core.servicios.generar_frases import GeneradorOraciones
 from core.servicios.evaluador_oraciones import EvaluadorNaturalidad
+from core.servicios.generar_frases import GeneradorOraciones
 
 
 def pruebas_rapidas():
     """Pruebas rápidas con GPT-2 para casos ambiguos (estilo original)"""
-    casos = [ 
+    casos = [
+        "la ciudad está dañada",
+        "Julián universidad estudia la en",
         "ratón el a gato persigue negro un",
-        "ratón un a gato persigue negro el"
+        "ratón un a gato persigue negro el",
     ]
     """, ""ganó rojo el carrera la coche",
         "ratón el a gato persigue negro un",
@@ -29,14 +32,14 @@ def pruebas_rapidas():
         "cansados primos parecen tus",
         "teléfono por hablando maneja conductor el",
         "cuaderno su trajo no joven el","""
-      
-    print("\n" + "="*60)
+
+    print("\n" + "=" * 60)
     print("PRUEBAS RÁPIDAS CON GPT-2")
-    print("="*60)
-    
+    print("=" * 60)
+
     # Instancias (Evaluador SIN logs para ser más limpio)
     evaluador = EvaluadorNaturalidad(mostrar_logs=True)  # Sin logs
-    
+
     for texto in casos:
         tokens = analizar_oracion(texto)
         chunks = generar_chunks(tokens)
@@ -49,22 +52,24 @@ def pruebas_rapidas():
         print(f"  imper: {chunks.pron_imp}")
         print(f"ambiguedades: {chunks.combinaciones_ambiguas}")
         print(tokens)
-        
-        
+
         # Usar evaluador (él maneja si carga GPT-2 o no)
         mejor = evaluador.elegir_mejor_frase(opciones, chunks)
-        
+
         print(f"\n'{texto}'")
         if mejor:
             if len(opciones) == 1:
                 print(f"  → {mejor.texto}")
             else:
                 # Caso ambiguo: mostrar la elegida por GPT-2
-                print(f"  → {mejor.texto} (GPT-2 eligió entre {len(opciones)} opciones)")
+                print(
+                    f"  → {mejor.texto} (GPT-2 eligió entre {len(opciones)} opciones)"
+                )
         else:
-            print(f"  → No se pudo reorganizar")
-    
-    print("\n" + "="*60)
+            print("  → No se pudo reorganizar")
+
+    print("\n" + "=" * 60)
+
 
 # Funciones wrapper para mantener tu estilo
 def analizar_oracion(texto):
@@ -72,15 +77,18 @@ def analizar_oracion(texto):
     analizador = Analizador()
     return analizador.analizar_oracion(texto)
 
+
 def generar_chunks(tokens):
-    """Wrapper para mantener tu estilo original""" 
+    """Wrapper para mantener tu estilo original"""
     constructor = ConstructorDeChunks()
     return constructor.generar_chunks(tokens)
+
 
 def generar_frases(chunks):
     """Wrapper para mantener tu estilo original"""
     generador = GeneradorOraciones()
     return generador.generar_frases(chunks)
+
 
 # Ejecutar solo pruebas rápidas:
 if __name__ == "__main__":

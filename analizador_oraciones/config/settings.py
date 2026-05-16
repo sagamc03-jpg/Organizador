@@ -1,45 +1,117 @@
 """
 Configuración centralizada del proyecto.
 """
+
 from typing import Set
+
 import os
+
 
 class Settings:
     """
     Configuración global de la aplicación.
     """
-    
+
     # === MODELOS NLP ===
     SPACY_MODEL: str = "es_core_news_lg"
     GPT2_MODEL: str = "DeepESP/gpt2-spanish"
-    
+
     # === PALABRAS ESPECIALES ===
     # Sustantivos que pueden funcionar como verbos
     SUSTANTIVOS_VERBALES: Set[str] = {
-        'baila', 'copia', 'manda','eres', 'guarda', 'cura', 'compra', 'canto', 'uso', 
-        'copio', 'pelea', 'bebe', 'mira', 'ama', 'odia', 'baja', 'caza', 'pesca', 
-        'cosecha', 'siembra', 'barniza', 'borda', 'rema', 'patina', 'brinca', 
-        'trota', 'escala', 'resbala', 'gira', 'ata', 'suelta', 'agarra', 'pega', 
-        'empuña', 'lanza', 'tira', 'custodia', 'combate', 'debate', 'corta', 
-        'rota', 'afloja', 'martilla', 'atornilla', 'pilota', 'bucea', 'surfea', 
-        'trepa', 'empuja', 'nada', 'es', 'ladra', 'vino', 'entrevista', 'muerde', 'para',
+        "baila",
+        "copia",
+        "manda",
+        "eres",
+        "guarda",
+        "cura",
+        "compra",
+        "canto",
+        "uso",
+        "copio",
+        "pelea",
+        "bebe",
+        "mira",
+        "ama",
+        "odia",
+        "baja",
+        "caza",
+        "pesca",
+        "cosecha",
+        "siembra",
+        "barniza",
+        "borda",
+        "rema",
+        "patina",
+        "brinca",
+        "trota",
+        "escala",
+        "resbala",
+        "gira",
+        "ata",
+        "suelta",
+        "agarra",
+        "pega",
+        "empuña",
+        "lanza",
+        "tira",
+        "custodia",
+        "combate",
+        "debate",
+        "corta",
+        "rota",
+        "afloja",
+        "martilla",
+        "atornilla",
+        "pilota",
+        "bucea",
+        "surfea",
+        "trepa",
+        "empuja",
+        "nada",
+        "es",
+        "ladra",
+        "vino",
+        "entrevista",
+        "muerde",
+        "para",
     }
-    #terminaciones de infinitivo y gerundio
+    # terminaciones de infinitivo y gerundio
     terminaciones_no_personales = ("ar", "er", "ir", "ando", "iendo", "yendo")
 
     ARTICULOS_DEFINIDOS: Set[str] = {"el", "la", "los", "las"}
-    
+
     # Preposiciones especiales
     PREPOSICIONES_ESPECIALES: Set[str] = {
-        "a", "desde", "entre", "hacia", "según", "hasta", "contra", "sin"
+        "a",
+        "desde",
+        "entre",
+        "hacia",
+        "según",
+        "hasta",
+        "contra",
+        "sin",
     }
-    
+
     # Terminaciones de participios
     TERMINACIONES_PARTICIPIO: list[str] = [
-        "oto", "lto", "ado", "ido", "sto",
-        "cho", "rto", "sta", "das", "dos", "ada", "do", "ito", "cha", "rita"
+        "oto",
+        "lto",
+        "ado",
+        "ido",
+        "sto",
+        "cho",
+        "rto",
+        "sta",
+        "das",
+        "dos",
+        "ada",
+        "do",
+        "ito",
+        "cha",
+        "rita",
     ]
-    
+
     # Correcciones de POS tags
     CORRECCIONES_POS: dict = {
         # Palabras que spaCy etiqueta mal
@@ -49,6 +121,7 @@ class Settings:
         "mar": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "celular": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "tejado": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
+        "universidad": {"pos": "NOUN", "gen": "Fem", "num": "Sing"},
         "ave": {"pos": "NOUN", "num": "Sing"},
         "bebé": {"pos": "NOUN", "num": "Sing"},
         "pájaro": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
@@ -63,22 +136,20 @@ class Settings:
         "anciano": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "delincuente": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "español": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
-        #DET y VERB
+        # DET y VERB
         "mi": {"pos": "DET", "num": "Sing"},
         "este": {"pos": "DET", "gen": "Masc", "num": "Sing"},
         "ese": {"pos": "DET", "gen": "Masc", "num": "Sing"},
         "esa": {"pos": "DET", "gen": "Fem", "num": "Sing"},
         "puede": {"pos": "VERB", "num": "Sing"},
         "marchitan": {"pos": "VERB", "num": "Plur"},
-
-        # Etiquetados porteriores a la prueba diagnóstico. 
-
-        #cat 1
+        # Etiquetados porteriores a la prueba diagnóstico.
+        # cat 1
         "rojo": {"pos": "ADJ", "gen": "Masc", "num": "Sing"},
         "vestido": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "negro": {"pos": "ADJ", "gen": "Masc", "num": "Sing"},
-        #cat 2
-        #"baila": {"pos": "VERB", "num": "Sing"},   puede ser un noun, se refiere al nombre de un pez
+        # cat 2
+        # "baila": {"pos": "VERB", "num": "Sing"},   puede ser un noun, se refiere al nombre de un pez
         "mecánico": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
         "tus": {"pos": "DET", "num": "Plur"},
         "primos": {"pos": "NOUN", "gen": "Masc", "num": "Plur"},
@@ -86,8 +157,6 @@ class Settings:
         # categoria 3
         "puerta": {"pos": "NOUN", "gen": "Fem", "num": "Sing"},
         "teléfono": {"pos": "NOUN", "gen": "Masc", "num": "Sing"},
-        
-
     }
     # posibles actualizaciones, permitir: verbo+nexo+verbo_inf con starswitch
     """ === DICCIONARIOS DE PERÍFRASIS ===
@@ -100,7 +169,7 @@ class Settings:
     APP_NAME: str = "NLP Sentence Analyzer"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
-    
+
     # === CONFIGURACIÓN DE EVALUACIÓN ===
     # Si usar GPT-2 para evaluar naturalidad
     USE_GPT2_EVALUATION: bool = True

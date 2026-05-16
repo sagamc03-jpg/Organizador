@@ -68,7 +68,7 @@ class Analizador:
             tokens.append(token)
         
         return tokens
-    # esto lo podemos convertir a una tabla
+    # esto lo podemos convertir a una tabla/lista
     def analizar_oracion_dict(self, oracion: str) -> List[dict]:
         """
         Retorna tokens como lista de diccionarios.
